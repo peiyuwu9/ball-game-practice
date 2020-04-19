@@ -2,7 +2,7 @@ let canvas, ctx, w, h;
 
 const ballArray = [];
 
-let ballSpeed = false;
+let gameStart = false;
 
 let numBalls = document.querySelector("#numBalls").value;
 let playerColor = document.querySelector("#colorChoose").value;
@@ -75,7 +75,7 @@ const createBallArray = (numBalls) => {
     ballArray.push(ball);
   }
   console.log(`Ball array: ${ballArray}`);
-  return ballArray;
+  // return ballArray;
 };
 
 // b. Draw balls
@@ -93,22 +93,18 @@ const drawBalls = (ballArray) => {
 
 // c1. Give balls speed
 const giveBallsSpeed = (ballArray) => {
-  if (!ballSpeed) {
-    ballArray.forEach((ball) => {
-      ball.speedX = -5 + 10 * this.Math.random();
-      ball.speedY = -5 + 10 * this.Math.random();
-    });
-  }
+  ballArray.forEach((ball) => {
+    ball.speedX = -5 + 10 * this.Math.random();
+    ball.speedY = -5 + 10 * this.Math.random();
+  });
 };
 
 // c2. Stop balls
 const removeBallsSpeed = (ballArray) => {
-  if (ballSpeed) {
-    ballArray.forEach((ball) => {
-      ball.speedX = 0;
-      ball.speedY = 0;
-    });
-  }
+  ballArray.forEach((ball) => {
+    ball.speedX = 0;
+    ball.speedY = 0;
+  });
 };
 
 // d. Move ball function
@@ -190,15 +186,19 @@ const mainLoop = () => {
 
 // Start game
 const startGame = () => {
-  giveBallsSpeed(ballArray);
-  ballSpeed = true;
-  mainLoop();
+  if (!gameStart) {
+    giveBallsSpeed(ballArray);
+    mainLoop();
+    gameStart = true;
+  }
 };
 
 // Stop game
 const stopGame = () => {
-  removeBallsSpeed(ballArray);
-  ballSpeed = false;
+  if (gameStart) {
+    removeBallsSpeed(ballArray);
+    gameStart = false;
+  }
 };
 
 // Check win
@@ -226,8 +226,11 @@ const setBallSpeed = (ballSpeedFactor) => {
 
 // Reset game
 const resetGame = () => {
-  ballArray = [];
-  ballSpeedX = 0;
-  ballSpeedY = 0;
+  while (ballArray.length !== 0) {
+    ballArray.pop();
+  }
+  gameStart = false;
+  createBallArray(numBalls);
+  drawBalls(ballArray);
   life = 10;
 };
